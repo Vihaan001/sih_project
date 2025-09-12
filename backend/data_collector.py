@@ -124,20 +124,22 @@ class DataProcessor:
     def prepare_features(data: Dict) -> pd.DataFrame:
         """
         Convert collected data into features for ML model
+        Uses column names that match the trained model: N, P, K, temperature, humidity, ph, rainfall
         """
         features = {
-            "ph": data["soil"]["ph"],
-            "nitrogen": data["soil"]["nitrogen"],
-            "phosphorus": data["soil"]["phosphorus"],
-            "potassium": data["soil"]["potassium"],
+            "N": data["soil"]["nitrogen"],        # Nitrogen - matches model expectation
+            "P": data["soil"]["phosphorus"],      # Phosphorus - matches model expectation  
+            "K": data["soil"]["potassium"],       # Potassium - matches model expectation
             "temperature": data["weather"]["temperature"],
             "humidity": data["weather"]["humidity"],
-            "rainfall": data["weather"]["rainfall"],
-            "moisture": data["soil"]["moisture"],
-            "organic_carbon": data["soil"]["organic_carbon"],
-            "ec": data["soil"]["ec"],
-            "texture_encoded": DataProcessor._encode_texture(data["soil"]["texture"]),
-            "season_encoded": DataProcessor._encode_season(data["weather"]["season"])
+            "ph": data["soil"]["ph"],
+            "rainfall": data["weather"]["rainfall"]
+            # Note: Removed extra features that aren't used by the trained model
+            # "moisture": data["soil"]["moisture"],
+            # "organic_carbon": data["soil"]["organic_carbon"],
+            # "ec": data["soil"]["ec"],
+            # "texture_encoded": DataProcessor._encode_texture(data["soil"]["texture"]),
+            # "season_encoded": DataProcessor._encode_season(data["weather"]["season"])
         }
         
         return pd.DataFrame([features])

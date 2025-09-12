@@ -19,8 +19,13 @@ class CropRecommendationModel:
         self.crop_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
         self.yield_predictor = GradientBoostingRegressor(n_estimators=50, random_state=42)
         self.scaler = StandardScaler()
+        self.yield_scaler = StandardScaler()
+        self.label_encoder = None
+        self.yield_label_encoder = None
         self.is_trained = False
         self.crop_database = self._initialize_crop_database()
+        self.feature_columns = ["N", "P", "K", "temperature", "humidity", "ph", "rainfall"]
+        self.yield_feature_columns = ["Area", "Crop_Year", "Crop_encoded", "Season_encoded"]
         
     def _initialize_crop_database(self) -> Dict:
         """
@@ -192,25 +197,40 @@ class CropRecommendationModel:
     
     def predict_crops(self, features: pd.DataFrame, top_n: int = 3) -> List[Dict]:
         """
-        Predict top N suitable crops for given conditions
+        Predict top N suitable crops for given conditions using trained models
         """
         if not self.is_trained:
             self.train_model()
         
-        # Get prediction probabilities
-        X = features.values
-        crop_probs = self.crop_classifier.predict_proba(X)[0]
+        # Prepare features for crop classification
+        # Ensure we have the right columns in the right order
+        crop_features = features[self.feature_columns].copy()
+        
+        # Scale features for crop classification
+        X_scaled = self.scaler.transform(crop_features.values)
+        
+        # Get prediction probabilities for crop classification
+        crop_probs = self.crop_classifier.predict_proba(X_scaled)[0]
+        crop_classes = self.crop_classifier.classes_  # These are integer labels
         
         # Get top N crops
-        crop_classes = self.crop_classifier.classes_
         top_indices = np.argsort(crop_probs)[-top_n:][::-1]
         
         recommendations = []
         for idx in top_indices:
-            crop = crop_classes[idx] if idx < len(crop_classes) else list(self.crop_database.keys())[idx % len(self.crop_database)]
+            crop_encoded = crop_classes[idx]  # This is an integer
+            confidence = float(crop_probs[idx])
             
-            # Predict yield
-            predicted_yield = self.yield_predictor.predict(X)[0]
+            # Convert encoded crop back to crop name using label encoder
+            if self.label_encoder:
+                crop = self.label_encoder.inverse_transform([crop_encoded])[0]
+            else:
+                # Fallback: use crop database keys
+                crop_names = list(self.crop_database.keys())
+                crop = crop_names[crop_encoded % len(crop_names)]
+            
+            # Predict yield for each crop
+            predicted_yield = self._predict_yield_for_crop(crop, features)
             
             # Calculate profit estimation (simplified)
             market_price = np.random.uniform(2000, 4000)  # Rs per quintal
@@ -221,7 +241,7 @@ class CropRecommendationModel:
             
             recommendation = {
                 "crop": crop,
-                "confidence": float(crop_probs[idx] if idx < len(crop_probs) else np.random.uniform(0.6, 0.9)),
+                "confidence": round(confidence, 3),
                 "predicted_yield": round(predicted_yield, 2),
                 "estimated_profit": round(estimated_profit, 0),
                 "profit_margin": crop_info.get("profit_margin", "Medium"),
@@ -232,6 +252,106 @@ class CropRecommendationModel:
             recommendations.append(recommendation)
         
         return recommendations
+    
+    def _predict_yield_for_crop(self, crop: str, features: pd.DataFrame) -> float:
+        """
+        Predict yield for a specific crop using the yield predictor model
+        """
+        try:
+            # The yield predictor predicts total Production (in tons) based on:
+            # [Area, Crop_Year, Crop_encoded, Season_encoded]
+            # We need to calculate yield per hectare = Production / Area
+            
+            # Use a reasonable area for yield calculation (1 hectare)
+            area_hectares = 1.0
+            crop_year = 2023  # Current year
+            
+            # Encode crop name using yield label encoder
+            if self.yield_label_encoder and hasattr(self.yield_label_encoder, 'classes_'):
+                try:
+                    # Convert crop name to match training data format (capitalized)
+                    crop_formatted = crop.capitalize()
+                    
+                    # Check if crop exists in yield encoder
+                    if crop_formatted in self.yield_label_encoder.classes_:
+                        crop_encoded = self.yield_label_encoder.transform([crop_formatted])[0]
+                    else:
+                        # Try common crop name mappings
+                        crop_mappings = {
+                            'rice': 'Rice',
+                            'wheat': 'Wheat', 
+                            'maize': 'Maize',
+                            'cotton': 'Cotton',
+                            'sugarcane': 'Sugarcane',
+                            'jute': 'Jute',
+                            'banana': 'Banana',
+                            'coffee': 'Coffee',
+                            'coconut': 'Coconut',
+                            'chickpea': 'Gram',
+                            'lentil': 'Lentil'
+                        }
+                        crop_mapped = crop_mappings.get(crop.lower(), crop_formatted)
+                        if crop_mapped in self.yield_label_encoder.classes_:
+                            crop_encoded = self.yield_label_encoder.transform([crop_mapped])[0]
+                        else:
+                            # Use first available crop as fallback
+                            crop_encoded = 0
+                except ValueError:
+                    crop_encoded = 0
+            else:
+                crop_encoded = 0
+            
+            # Determine season encoding (based on training data: 0=Kharif, 1=Rabi, 2=Summer/Zaid)
+            crop_info = self.crop_database.get(crop, {})
+            season = crop_info.get("season", ["Kharif"])[0].lower()
+            season_encoded = {"kharif": 0, "rabi": 1, "zaid": 2, "summer": 2}.get(season, 0)
+            
+            # Create yield feature vector [Area, Crop_Year, Crop_encoded, Season_encoded]
+            # Use median area from training data (around 580 hectares)
+            prediction_area = 580.0  # Use median area for more realistic predictions
+            yield_features = np.array([[prediction_area, crop_year, crop_encoded, season_encoded]])
+            
+            # Scale yield features
+            if self.yield_scaler:
+                try:
+                    yield_features_scaled = self.yield_scaler.transform(yield_features)
+                except:
+                    # If scaling fails, use original features
+                    yield_features_scaled = yield_features
+            else:
+                yield_features_scaled = yield_features
+            
+            # Predict total production for the prediction area
+            predicted_production = self.yield_predictor.predict(yield_features_scaled)[0]
+            
+            # Calculate yield per hectare
+            predicted_yield_per_hectare = predicted_production / prediction_area
+            
+            # Ensure reasonable yield values (tons per hectare)
+            # Typical yields: Rice: 2-6, Wheat: 2-5, Maize: 3-8, Cotton: 1-3, Sugarcane: 60-100
+            if predicted_yield_per_hectare <= 0:
+                # Use fallback default yields if prediction is negative or zero
+                default_yields = {
+                    "rice": 3.5, "wheat": 3.0, "maize": 4.0, "cotton": 2.0,
+                    "sugarcane": 75.0, "jute": 2.5, "banana": 15.0, "coffee": 1.0,
+                    "coconut": 0.8, "chickpea": 1.5, "lentil": 1.2, "soybean": 2.5
+                }
+                predicted_yield_per_hectare = default_yields.get(crop.lower(), 3.0)
+            else:
+                # Cap extremely high values
+                predicted_yield_per_hectare = min(predicted_yield_per_hectare, 150.0)
+            
+            return predicted_yield_per_hectare
+            
+        except Exception as e:
+            print(f"Error predicting yield for {crop}: {e}")
+            # Return a reasonable default yield based on crop type
+            default_yields = {
+                "rice": 3.5, "wheat": 3.0, "maize": 4.0, "cotton": 2.0,
+                "sugarcane": 75.0, "jute": 2.5, "banana": 15.0, "coffee": 1.0,
+                "coconut": 0.8, "chickpea": 1.5, "lentil": 1.2, "soybean": 2.5
+            }
+            return default_yields.get(crop.lower(), 3.0)
     
     def _generate_care_tips(self, crop: str) -> List[str]:
         """
@@ -291,25 +411,80 @@ class CropRecommendationModel:
         joblib.dump(self.crop_classifier, f"{path}crop_classifier.pkl")
         joblib.dump(self.yield_predictor, f"{path}yield_predictor.pkl")
         joblib.dump(self.scaler, f"{path}scaler.pkl")
+        joblib.dump(self.yield_scaler, f"{path}yield_scaler.pkl")
+        
+        if self.label_encoder:
+            joblib.dump(self.label_encoder, f"{path}label_encoder.pkl")
+        if self.yield_label_encoder:
+            joblib.dump(self.yield_label_encoder, f"{path}yield_label_encoder.pkl")
+        
+        # Save model metadata
+        metadata = {
+            "feature_columns": self.feature_columns,
+            "yield_feature_columns": self.yield_feature_columns,
+            "crops": list(self.crop_classifier.classes_) if hasattr(self.crop_classifier, 'classes_') else list(self.crop_database.keys())
+        }
+        
+        with open(f"{path}model_metadata.json", 'w') as f:
+            json.dump(metadata, f, indent=2)
         
         with open(f"{path}crop_database.json", 'w') as f:
             json.dump(self.crop_database, f)
     
     def load_model(self, path: str = "ml_models/"):
         """
-        Load pre-trained model
+        Load pre-trained model with all components
         """
         try:
+            # Load the main models
             self.crop_classifier = joblib.load(f"{path}crop_classifier.pkl")
             self.yield_predictor = joblib.load(f"{path}yield_predictor.pkl")
+            
+            # Load scalers
             self.scaler = joblib.load(f"{path}scaler.pkl")
             
-            with open(f"{path}crop_database.json", 'r') as f:
-                self.crop_database = json.load(f)
+            # Try to load yield scaler (may not exist in older models)
+            try:
+                self.yield_scaler = joblib.load(f"{path}yield_scaler.pkl")
+            except FileNotFoundError:
+                print("Yield scaler not found, using default scaler")
+                self.yield_scaler = StandardScaler()
+            
+            # Try to load label encoders
+            try:
+                self.label_encoder = joblib.load(f"{path}label_encoder.pkl")
+            except FileNotFoundError:
+                print("Label encoder not found")
+                self.label_encoder = None
+                
+            try:
+                self.yield_label_encoder = joblib.load(f"{path}yield_label_encoder.pkl")
+            except FileNotFoundError:
+                print("Yield label encoder not found")
+                self.yield_label_encoder = None
+            
+            # Load metadata if available
+            try:
+                with open(f"{path}model_metadata.json", 'r') as f:
+                    metadata = json.load(f)
+                    self.feature_columns = metadata.get("feature_columns", self.feature_columns)
+                    self.yield_feature_columns = metadata.get("yield_feature_columns", self.yield_feature_columns)
+            except FileNotFoundError:
+                print("Model metadata not found, using default feature columns")
+            
+            # Load crop database if available
+            try:
+                with open(f"{path}crop_database.json", 'r') as f:
+                    self.crop_database = json.load(f)
+            except FileNotFoundError:
+                print("Crop database not found, using default database")
             
             self.is_trained = True
-        except FileNotFoundError:
-            print("Model files not found. Training new model...")
+            print("Successfully loaded all model components")
+            
+        except FileNotFoundError as e:
+            print(f"Model files not found: {e}")
+            print("Training new model...")
             self.train_model()
 
 class CropRotationPlanner:

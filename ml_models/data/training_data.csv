@@ -1,0 +1,6 @@
+latitude,longitude,ph,nitrogen,phosphorus,potassium,temperature,humidity,rainfall,moisture,organic_carbon,ec,texture,season,wind_speed,sand,silt,clay
+23.3441,85.3096,6.5,150,40.0,180.0,28,65,10,25,1.2,0.5,Loamy,Kharif,12,40.0,30.0,30.0
+23.7957,86.4304,6.5,150,40.0,180.0,28,65,10,25,1.2,0.5,Loamy,Kharif,12,40.0,30.0,30.0
+22.8046,86.2029,6.5,150,40.0,180.0,28,65,10,25,1.2,0.5,Loamy,Kharif,12,40.0,30.0,30.0
+23.6693,86.1511,6.5,150,40.0,180.0,28,65,10,25,1.2,0.5,Loamy,Kharif,12,40.0,30.0,30.0
+24.2074,84.367,7.2,15700,245.0,399.0,28,65,10,0,15.0,0.5,Loamy,Kharif,12,18.0,42.6,39.4

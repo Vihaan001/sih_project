@@ -27,9 +27,9 @@ class GeminiAssistant:
         self.api_key = os.getenv('GEMINI_API_KEY', '')
         if self.api_key:
             genai.configure(api_key=self.api_key)
-            self.model = genai.GenerativeModel('gemini-pro')
+            self.model = genai.GenerativeModel('gemini-2.5-flash')  # Updated to use gemini-1.5-flash
             self.is_configured = True
-            logger.info("Gemini AI configured successfully")
+            logger.info("Gemini AI configured successfully with gemini-2.5-flash")
         else:
             self.model = None
             self.is_configured = False

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,87 +11,89 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
         }
-        
+
         header {
             background: white;
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        
+
         h1 {
             color: #4a5568;
             font-size: 2em;
             margin-bottom: 10px;
         }
-        
+
         .subtitle {
             color: #718096;
         }
-        
+
         .main-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
-        
+
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
             }
         }
-        
+
         .card {
             background: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        
+
         .card h2 {
             color: #4a5568;
             margin-bottom: 20px;
             border-bottom: 2px solid #e2e8f0;
             padding-bottom: 10px;
         }
-        
+
         .form-group {
             margin-bottom: 15px;
         }
-        
+
         label {
             display: block;
             color: #4a5568;
             margin-bottom: 5px;
             font-weight: 500;
         }
-        
-        input, select, textarea {
+
+        input,
+        select,
+        textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #cbd5e0;
             border-radius: 5px;
             font-size: 14px;
         }
-        
+
         textarea {
             resize: vertical;
             min-height: 100px;
         }
-        
+
         button {
             background: #667eea;
             color: white;
@@ -102,20 +105,20 @@
             font-weight: 500;
             transition: background 0.3s;
         }
-        
+
         button:hover {
             background: #5a67d8;
         }
-        
+
         button:disabled {
             background: #cbd5e0;
             cursor: not-allowed;
         }
-        
+
         .recommendations {
             margin-top: 20px;
         }
-        
+
         .recommendation-card {
             background: #f7fafc;
             padding: 15px;
@@ -123,29 +126,29 @@
             margin-bottom: 15px;
             border-left: 4px solid #667eea;
         }
-        
+
         .crop-name {
             font-size: 1.2em;
             font-weight: bold;
             color: #2d3748;
             margin-bottom: 10px;
         }
-        
+
         .crop-details {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin-bottom: 10px;
         }
-        
+
         .detail-item {
             color: #4a5568;
         }
-        
+
         .detail-label {
             font-weight: 500;
         }
-        
+
         .confidence-bar {
             height: 10px;
             background: #e2e8f0;
@@ -153,36 +156,36 @@
             overflow: hidden;
             margin-top: 5px;
         }
-        
+
         .confidence-fill {
             height: 100%;
             background: #48bb78;
             transition: width 0.5s;
         }
-        
+
         .care-tips {
             background: white;
             padding: 10px;
             border-radius: 5px;
             margin-top: 10px;
         }
-        
+
         .care-tips h4 {
             color: #2d3748;
             margin-bottom: 5px;
         }
-        
+
         .care-tips ul {
             margin-left: 20px;
             color: #4a5568;
         }
-        
+
         .chat-container {
             height: 400px;
             display: flex;
             flex-direction: column;
         }
-        
+
         .chat-messages {
             flex: 1;
             overflow-y: auto;
@@ -192,39 +195,39 @@
             margin-bottom: 10px;
             background: #f7fafc;
         }
-        
+
         .message {
             margin-bottom: 10px;
             padding: 10px;
             border-radius: 5px;
         }
-        
+
         .user-message {
             background: #667eea;
             color: white;
             text-align: right;
         }
-        
+
         .bot-message {
             background: white;
             color: #2d3748;
         }
-        
+
         .chat-input {
             display: flex;
             gap: 10px;
         }
-        
+
         .chat-input input {
             flex: 1;
         }
-        
+
         .loading {
             text-align: center;
             color: #718096;
             padding: 20px;
         }
-        
+
         .spinner {
             border: 3px solid #e2e8f0;
             border-top: 3px solid #667eea;
@@ -234,18 +237,23 @@
             animation: spin 1s linear infinite;
             margin: 0 auto;
         }
-        
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
-        
+
         .tabs {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
         }
-        
+
         .tab {
             padding: 10px 20px;
             background: #e2e8f0;
@@ -253,20 +261,20 @@
             cursor: pointer;
             transition: background 0.3s;
         }
-        
+
         .tab.active {
             background: #667eea;
             color: white;
         }
-        
+
         .tab-content {
             display: none;
         }
-        
+
         .tab-content.active {
             display: block;
         }
-        
+
         .offline-indicator {
             background: #fed7d7;
             color: #c53030;
@@ -275,12 +283,13 @@
             font-size: 12px;
             display: none;
         }
-        
+
         .offline .offline-indicator {
             display: inline-block;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -288,33 +297,33 @@
             <p class="subtitle">Smart farming decisions powered by artificial intelligence</p>
             <span class="offline-indicator">Offline Mode</span>
         </header>
-        
+
         <div class="main-content">
             <div class="card">
                 <h2>Get Crop Recommendations</h2>
-                
+
                 <div class="tabs">
                     <div class="tab active" onclick="switchTab('location')">Location Based</div>
                     <div class="tab" onclick="switchTab('manual')">Manual Input</div>
                 </div>
-                
+
                 <div id="location-tab" class="tab-content active">
                     <form id="location-form">
                         <div class="form-group">
                             <label for="latitude">Latitude:</label>
                             <input type="number" id="latitude" name="latitude" step="0.0001" value="23.3441" required>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="longitude">Longitude:</label>
                             <input type="number" id="longitude" name="longitude" step="0.0001" value="85.3096" required>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="region">Region:</label>
                             <input type="text" id="region" name="region" value="Jharkhand" required>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="language">Language:</label>
                             <select id="language" name="language">
@@ -322,55 +331,56 @@
                                 <option value="hi">हिन्दी (Hindi)</option>
                             </select>
                         </div>
-                        
+
                         <button type="submit">Get Recommendations</button>
                     </form>
                 </div>
-                
+
                 <div id="manual-tab" class="tab-content">
                     <form id="manual-form">
                         <div class="form-group">
                             <label for="ph">Soil pH:</label>
                             <input type="number" id="ph" name="ph" step="0.1" min="4" max="10" placeholder="6.5">
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="nitrogen">Nitrogen (kg/ha):</label>
                             <input type="number" id="nitrogen" name="nitrogen" step="1" placeholder="150">
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="phosphorus">Phosphorus (kg/ha):</label>
                             <input type="number" id="phosphorus" name="phosphorus" step="1" placeholder="50">
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="potassium">Potassium (kg/ha):</label>
                             <input type="number" id="potassium" name="potassium" step="1" placeholder="200">
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="rainfall">Expected Rainfall (mm):</label>
                             <input type="number" id="rainfall" name="rainfall" step="1" placeholder="100">
                         </div>
-                        
+
                         <button type="submit">Get Recommendations</button>
                     </form>
                 </div>
-                
+
                 <div id="recommendations" class="recommendations"></div>
             </div>
-            
+
             <div class="card">
                 <h2>Ask Your Agricultural Assistant</h2>
-                
+
                 <div class="chat-container">
                     <div class="chat-messages" id="chat-messages">
                         <div class="message bot-message">
-                            Hello! I'm your agricultural assistant. Ask me anything about farming, crops, diseases, or market prices.
+                            Hello! I'm your agricultural assistant. Ask me anything about farming, crops, diseases, or
+                            market prices.
                         </div>
                     </div>
-                    
+
                     <div class="chat-input">
                         <input type="text" id="chat-input" placeholder="Type your question here...">
                         <button onclick="sendMessage()">Send</button>
@@ -379,12 +389,12 @@
             </div>
         </div>
     </div>
-    
+
     <script>
         const API_URL = 'http://localhost:8000';
         let isOffline = false;
         let offlineData = {};
-        
+
         // Check if API is available
         async function checkConnection() {
             try {
@@ -398,7 +408,7 @@
                 loadOfflineData();
             }
         }
-        
+
         // Load offline data
         async function loadOfflineData() {
             try {
@@ -413,12 +423,12 @@
                 }
             }
         }
-        
+
         // Switch tabs
         function switchTab(tab) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
+
             if (tab === 'location') {
                 document.querySelector('.tabs .tab:first-child').classList.add('active');
                 document.getElementById('location-tab').classList.add('active');
@@ -427,11 +437,11 @@
                 document.getElementById('manual-tab').classList.add('active');
             }
         }
-        
+
         // Handle location form submission
         document.getElementById('location-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const formData = new FormData(e.target);
             const data = {
                 location: {
@@ -441,23 +451,23 @@
                 },
                 language: formData.get('language')
             };
-            
+
             await getRecommendations(data);
         });
-        
+
         // Handle manual form submission
         document.getElementById('manual-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const formData = new FormData(e.target);
             const soilData = {};
-            
+
             for (let [key, value] of formData.entries()) {
                 if (value) {
                     soilData[key] = parseFloat(value);
                 }
             }
-            
+
             const data = {
                 location: {
                     latitude: 23.3441,
@@ -467,22 +477,22 @@
                 soil_data: soilData,
                 language: document.getElementById('language').value
             };
-            
+
             await getRecommendations(data);
         });
-        
+
         // Get recommendations from API
         async function getRecommendations(data) {
             const recommendationsDiv = document.getElementById('recommendations');
             recommendationsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>Getting recommendations...</div>';
-            
+
             try {
                 if (isOffline) {
                     // Use offline recommendations
                     displayOfflineRecommendations(data);
                     return;
                 }
-                
+
                 const response = await fetch(API_URL + '/recommend', {
                     method: 'POST',
                     headers: {
@@ -490,9 +500,9 @@
                     },
                     body: JSON.stringify(data)
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (result.status === 'success') {
                     displayRecommendations(result.recommendations, result.environmental_data);
                 } else {
@@ -503,12 +513,12 @@
                 recommendationsDiv.innerHTML = '<p style="color: red;">Failed to connect to server</p>';
             }
         }
-        
+
         // Display recommendations
         function displayRecommendations(recommendations, environmentalData) {
             const recommendationsDiv = document.getElementById('recommendations');
             let html = '<h3>Recommended Crops</h3>';
-            
+
             if (environmentalData) {
                 html += `
                     <div style="margin-bottom: 15px; padding: 10px; background: #f7fafc; border-radius: 5px;">
@@ -519,7 +529,7 @@
                     </div>
                 `;
             }
-            
+
             recommendations.forEach(rec => {
                 html += `
                     <div class="recommendation-card">
@@ -556,19 +566,19 @@
                     </div>
                 `;
             });
-            
+
             recommendationsDiv.innerHTML = html;
         }
-        
+
         // Display offline recommendations
         function displayOfflineRecommendations(data) {
             const recommendationsDiv = document.getElementById('recommendations');
-            
+
             if (!offlineData.data || !offlineData.data.crop_database) {
                 recommendationsDiv.innerHTML = '<p>Offline data not available</p>';
                 return;
             }
-            
+
             // Simple offline recommendation based on stored crop database
             const crops = Object.keys(offlineData.data.crop_database);
             const recommendations = crops.slice(0, 3).map(crop => {
@@ -584,41 +594,41 @@
                     care_tips: ["Consult local agricultural expert", "Monitor crop regularly"]
                 };
             });
-            
+
             displayRecommendations(recommendations, null);
         }
-        
+
         // Send chat message
         async function sendMessage() {
             const input = document.getElementById('chat-input');
             const message = input.value.trim();
-            
+
             if (!message) return;
-            
+
             const messagesDiv = document.getElementById('chat-messages');
-            
+
             // Add user message
             messagesDiv.innerHTML += `<div class="message user-message">${message}</div>`;
             input.value = '';
-            
+
             // Show loading
             messagesDiv.innerHTML += `<div class="message bot-message loading">Thinking...</div>`;
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            
+
             try {
                 if (isOffline) {
                     // Use offline responses
                     setTimeout(() => {
                         const loadingMsg = messagesDiv.querySelector('.loading');
                         loadingMsg.remove();
-                        
+
                         const response = getOfflineResponse(message);
                         messagesDiv.innerHTML += `<div class="message bot-message">${response}</div>`;
                         messagesDiv.scrollTop = messagesDiv.scrollHeight;
                     }, 500);
                     return;
                 }
-                
+
                 const response = await fetch(API_URL + '/chat', {
                     method: 'POST',
                     headers: {
@@ -629,13 +639,13 @@
                         language: document.getElementById('language').value
                     })
                 });
-                
+
                 const result = await response.json();
-                
+
                 // Remove loading message
                 const loadingMsg = messagesDiv.querySelector('.loading');
                 loadingMsg.remove();
-                
+
                 if (result.status === 'success') {
                     const botResponse = formatChatResponse(result.response);
                     messagesDiv.innerHTML += `<div class="message bot-message">${botResponse}</div>`;
@@ -648,72 +658,116 @@
                 if (loadingMsg) loadingMsg.remove();
                 messagesDiv.innerHTML += `<div class="message bot-message">Sorry, I'm having trouble connecting to the server.</div>`;
             }
-            
+
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
-        
+
         // Format chat response
         function formatChatResponse(response) {
-            let html = response.message || '';
-            
-            if (response.suggestions && response.suggestions.length > 0) {
-                html += '<br><br><strong>Suggestions:</strong><ul>';
-                response.suggestions.forEach(suggestion => {
-                    html += `<li>${suggestion}</li>`;
-                });
-                html += '</ul>';
-            }
-            
-            if (response.current_weather) {
-                html += '<br><strong>Current Weather:</strong><br>';
-                html += `Temperature: ${response.current_weather.temperature}<br>`;
-                html += `Humidity: ${response.current_weather.humidity}<br>`;
-                html += `Rainfall: ${response.current_weather.rainfall}`;
-            }
-            
-            if (response.current_prices) {
-                html += '<br><strong>Market Prices:</strong><br>';
-                for (let crop in response.current_prices) {
-                    html += `${crop}: ${response.current_prices[crop].price}<br>`;
+            let html = '';
+
+            // Handle both string responses and structured responses
+            if (typeof response === 'string') {
+                html = response;
+            } else {
+                html = response.message || response.response || '';
+
+                if (response.suggestions && response.suggestions.length > 0) {
+                    html += '<br><br><strong>Suggestions:</strong><ul>';
+                    response.suggestions.forEach(suggestion => {
+                        html += `<li>${suggestion}</li>`;
+                    });
+                    html += '</ul>';
+                }
+
+                if (response.current_weather) {
+                    html += '<br><strong>Current Weather:</strong><br>';
+                    html += `Temperature: ${response.current_weather.temperature}<br>`;
+                    html += `Humidity: ${response.current_weather.humidity}<br>`;
+                    html += `Rainfall: ${response.current_weather.rainfall}`;
+                }
+
+                if (response.current_prices) {
+                    html += '<br><strong>Market Prices:</strong><br>';
+                    for (let crop in response.current_prices) {
+                        html += `${crop}: ${response.current_prices[crop].price}<br>`;
+                    }
                 }
             }
-            
+
+            // Convert markdown formatting to HTML
+            html = convertMarkdownToHtml(html);
+
             return html;
         }
-        
+
+        // Convert basic markdown to HTML
+        function convertMarkdownToHtml(text) {
+            if (!text) return '';
+
+            // Convert bold text (**text** to <strong>text</strong>)
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+            // Convert italic text (*text* to <em>text</em>)
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+            // Convert headers (### Header to <h3>Header</h3>)
+            text = text.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+            text = text.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+            text = text.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+
+            // Convert bullet points (- item to <li>item</li>)
+            text = text.replace(/^-\s+(.*$)/gm, '<li>$1</li>');
+            text = text.replace(/^\*\s+(.*$)/gm, '<li>$1</li>');
+
+            // Wrap consecutive <li> items in <ul> tags
+            text = text.replace(/(<li>.*<\/li>\s*)+/gs, function (match) {
+                return '<ul>' + match + '</ul>';
+            });
+
+            // Convert line breaks to <br> tags
+            text = text.replace(/\n/g, '<br>');
+
+            // Convert horizontal rules (--- to <hr>)
+            text = text.replace(/^---$/gm, '<hr>');
+
+            return text;
+        }
+
         // Get offline response
         function getOfflineResponse(message) {
             const lowerMessage = message.toLowerCase();
-            
+
             if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
                 return "Hello! I'm currently working offline, but I can still help with basic agricultural questions.";
             }
-            
+
             if (lowerMessage.includes('crop') || lowerMessage.includes('recommend')) {
                 return "For crop recommendations, please use the form on the left. In offline mode, I'll provide general recommendations based on cached data.";
             }
-            
+
             if (lowerMessage.includes('weather')) {
                 return "Weather data is not available in offline mode. Please check your local weather service.";
             }
-            
+
             if (lowerMessage.includes('price') || lowerMessage.includes('market')) {
                 return "Market prices are not available in offline mode. Please check with your local mandi when you're back online.";
             }
-            
+
             return "I'm working in offline mode with limited capabilities. Please try again when you're connected to the internet for full functionality.";
         }
-        
+
         // Allow Enter key to send message
         document.getElementById('chat-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 sendMessage();
             }
         });
-        
+
         // Check connection on load
         checkConnection();
         setInterval(checkConnection, 30000); // Check every 30 seconds
     </script>
 </body>
+
 </html>

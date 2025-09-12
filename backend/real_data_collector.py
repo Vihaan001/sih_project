@@ -27,12 +27,12 @@ class RealDataCollector:
         # API Keys (store in .env file)
         self.openweather_api_key = os.getenv('OPENWEATHER_API_KEY', '')
         self.agromonitoring_api_key = os.getenv('AGROMONITORING_API_KEY', '')
-        self.soilgrids_api_key = os.getenv('SOILGRIDS_API_KEY', '')
+        # Note: SoilGrids API is free and doesn't require an API key
         
         # API Endpoints
         self.apis = {
             'openweather': 'https://api.openweathermap.org/data/2.5',
-            'soilgrids': 'https://rest.isric.org/soilgrids/v2.0',
+            'soilgrids': 'https://rest.isric.org/soilgrids/v2.0',  # Free, no API key needed
             'bhuvan': 'https://bhuvan-vec1.nrsc.gov.in',
             'agmarknet': 'https://agmarknet.gov.in/SearchCmmMkt.aspx',
             'agromonitoring': 'http://api.agromonitoring.com/agro/1.0',
@@ -44,6 +44,7 @@ class RealDataCollector:
         """
         Fetch soil data from SoilGrids API (ISRIC)
         Free API with global soil data at 250m resolution
+        No API key required - uses simple GET requests
         """
         try:
             # SoilGrids properties we want to fetch
@@ -61,20 +62,18 @@ class RealDataCollector:
             # Depths in cm (we'll use 0-5cm and 5-15cm)
             depths = ['0-5cm', '5-15cm']
             
-            # Build query
-            properties_query = '&'.join([f'property={prop}' for prop in properties])
-            depths_query = '&'.join([f'depth={depth}' for depth in depths])
-            
+            # Build the GET request URL with query parameters
             url = f"{self.apis['soilgrids']}/properties/query"
             params = {
                 'lon': longitude,
                 'lat': latitude,
                 'property': properties,
                 'depth': depths,
-                'value': 'mean'
+                'value': 'mean'  # Get mean values
             }
             
-            response = requests.get(url, params=params)
+            # Make GET request - no authentication needed
+            response = requests.get(url, params=params, timeout=10)
             
             if response.status_code == 200:
                 data = response.json()
@@ -98,24 +97,37 @@ class RealDataCollector:
                 # Extract values from response
                 if 'properties' in data:
                     layers = data['properties']['layers']
+                    def safe_get_mean(layer, idx=0):
+                        try:
+                            val = layer['depths'][idx]['values']['mean']
+                            return val if val is not None else 0
+                        except Exception:
+                            return 0
                     for layer in layers:
                         if layer['name'] == 'phh2o':
                             # pH is given in 10 * actual value
-                            soil_data['ph'] = layer['depths'][0]['values']['mean'] / 10
+                            val = safe_get_mean(layer)
+                            soil_data['ph'] = val / 10 if val else 0
                         elif layer['name'] == 'nitrogen':
                             # Convert from g/kg to kg/ha (approximate)
-                            soil_data['nitrogen'] = layer['depths'][0]['values']['mean'] * 100
+                            val = safe_get_mean(layer)
+                            soil_data['nitrogen'] = val * 100 if val else 0
                         elif layer['name'] == 'soc':
                             # Soil organic carbon in g/kg
-                            soil_data['organic_carbon'] = layer['depths'][0]['values']['mean'] / 10
+                            val = safe_get_mean(layer)
+                            soil_data['organic_carbon'] = val / 10 if val else 0
                         elif layer['name'] == 'sand':
-                            soil_data['sand'] = layer['depths'][0]['values']['mean'] / 10
+                            val = safe_get_mean(layer)
+                            soil_data['sand'] = val / 10 if val else 0
                         elif layer['name'] == 'silt':
-                            soil_data['silt'] = layer['depths'][0]['values']['mean'] / 10
+                            val = safe_get_mean(layer)
+                            soil_data['silt'] = val / 10 if val else 0
                         elif layer['name'] == 'clay':
-                            soil_data['clay'] = layer['depths'][0]['values']['mean'] / 10
+                            val = safe_get_mean(layer)
+                            soil_data['clay'] = val / 10 if val else 0
                         elif layer['name'] == 'cec':
-                            soil_data['cec'] = layer['depths'][0]['values']['mean'] / 10
+                            val = safe_get_mean(layer)
+                            soil_data['cec'] = val / 10 if val else 0
                 
                 # Determine soil texture based on sand, silt, clay percentages
                 soil_data['texture'] = self._determine_soil_texture(
@@ -544,6 +556,109 @@ class RealDataCollector:
         # Process based on actual IMD response structure
         return self._get_fallback_weather_data()
 
+    # Interface methods for compatibility with main.py
+    def get_soil_data(self, latitude: float, longitude: float) -> Dict:
+        """
+        Get soil data using SoilGrids API (main interface method)
+        """
+        return self.get_soil_data_soilgrids(latitude, longitude)
+    
+    def get_weather_data(self, latitude: float, longitude: float) -> Dict:
+        """
+        Get weather data using OpenWeather API (main interface method)
+        """
+        return self.get_weather_data_openweather(latitude, longitude)
+    
+    def get_market_prices(self, crops: List[str] = None) -> Dict:
+        """
+        Get market prices (placeholder for now)
+        """
+        # Mock market data for now
+        default_crops = ["rice", "wheat", "maize", "cotton", "sugarcane", "jute"]
+        if crops is None:
+            crops = default_crops
+        
+        market_data = {}
+        for crop in crops:
+            market_data[crop] = {
+                "price": round(np.random.uniform(20, 50), 2),  # Price per kg
+                "unit": "₹/kg",
+                "trend": np.random.choice(["up", "down", "stable"]),
+                "last_updated": datetime.now().isoformat()
+            }
+        return market_data
+    
+    def get_historical_crop_data(self, region: str = "Default") -> Dict:
+        """
+        Get historical crop data for the region
+        """
+        # Mock historical data for now
+        return {
+            "successful_crops": ["rice", "wheat", "jute"],
+            "seasonal_patterns": {
+                "kharif": ["rice", "cotton", "sugarcane"],
+                "rabi": ["wheat", "mustard", "gram"]
+            },
+            "avg_yields": {
+                "rice": 3.5,
+                "wheat": 2.8,
+                "jute": 2.1
+            }
+        }
+    
+    def get_comprehensive_data(self, latitude: float, longitude: float, 
+                              region: str = "Default") -> Dict:
+        """
+        Get all data required for crop recommendation using real APIs
+        """
+        try:
+            # Get soil data from SoilGrids
+            soil_data = self.get_soil_data_soilgrids(latitude, longitude)
+            
+            # Get weather data from OpenWeather
+            weather_data = self.get_weather_data_openweather(latitude, longitude)
+            
+            # Get basic market data
+            market_data = self.get_market_prices()
+            
+            # Get historical data
+            historical_data = self.get_historical_crop_data(region)
+            
+            return {
+                "soil": soil_data,
+                "weather": weather_data,
+                "market": market_data,
+                "history": historical_data,
+                "location": {
+                    "latitude": latitude,
+                    "longitude": longitude,
+                    "region": region
+                },
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            print(f"Error getting comprehensive data: {e}")
+            # Return fallback data
+            return self._get_fallback_comprehensive_data(latitude, longitude, region)
+    
+    def _get_fallback_comprehensive_data(self, latitude: float, longitude: float, 
+                                        region: str) -> Dict:
+        """
+        Fallback data when APIs fail
+        """
+        return {
+            "soil": self._get_fallback_soil_data(),
+            "weather": self._get_fallback_weather_data(),
+            "market": self.get_market_prices(),
+            "history": self.get_historical_crop_data(region),
+            "location": {
+                "latitude": latitude,
+                "longitude": longitude,
+                "region": region
+            },
+            "timestamp": datetime.now().isoformat()
+        }
+
 
 class DatasetBuilder:
     """
@@ -570,6 +685,9 @@ class DatasetBuilder:
                 soil_data = self.collector.get_soil_data_soilgrids(lat, lon)
                 weather_data = self.collector.get_weather_data_openweather(lat, lon)
                 
+                # NEW: Get historical crop data from data.gov.in for context
+                historical_data = self.collector.get_crop_yield_data("Jharkhand")
+                
                 # Combine into single record
                 record = {
                     'latitude': lat,
@@ -586,6 +704,8 @@ class DatasetBuilder:
                     'ec': soil_data['ec'],
                     'texture': soil_data['texture'],
                     'season': weather_data['season'],
+                    'historical_yield_available': len(historical_data) > 0,
+                    'data_source': 'combined_apis',
                     'wind_speed': weather_data['wind_speed'],
                     'sand': soil_data['sand'],
                     'silt': soil_data['silt'],
@@ -632,3 +752,158 @@ class DatasetBuilder:
         Fetch historical crop yield data
         """
         return self.collector.get_crop_yield_data(state)
+    
+    # Interface methods for compatibility with main.py
+    def get_soil_data(self, latitude: float, longitude: float) -> Dict:
+        """
+        Get soil data using SoilGrids API (main interface method)
+        """
+        return self.get_soil_data_soilgrids(latitude, longitude)
+    
+    def get_weather_data(self, latitude: float, longitude: float) -> Dict:
+        """
+        Get weather data using OpenWeather API (main interface method)
+        """
+        return self.get_weather_data_openweather(latitude, longitude)
+    
+    def get_market_prices(self, crops: List[str] = None) -> Dict:
+        """
+        Get market prices (placeholder for now)
+        """
+        # Mock market data for now
+        default_crops = ["rice", "wheat", "maize", "cotton", "sugarcane", "jute"]
+        if crops is None:
+            crops = default_crops
+        
+        market_data = {}
+        for crop in crops:
+            market_data[crop] = {
+                "price": round(np.random.uniform(20, 50), 2),  # Price per kg
+                "unit": "₹/kg",
+                "trend": np.random.choice(["up", "down", "stable"]),
+                "last_updated": datetime.now().isoformat()
+            }
+        return market_data
+    
+    def get_historical_crop_data(self, region: str = "Default") -> Dict:
+        """
+        Get historical crop data for the region
+        """
+        # Mock historical data for now
+        return {
+            "successful_crops": ["rice", "wheat", "jute"],
+            "seasonal_patterns": {
+                "kharif": ["rice", "cotton", "sugarcane"],
+                "rabi": ["wheat", "mustard", "gram"]
+            },
+            "avg_yields": {
+                "rice": 3.5,
+                "wheat": 2.8,
+                "jute": 2.1
+            }
+        }
+    
+    
+    # Interface methods for compatibility with main.py
+    def get_soil_data(self, latitude: float, longitude: float) -> Dict:
+        """
+        Fetch soil data using SoilGrids API
+        """
+        return self.get_soil_data_soilgrids(latitude, longitude)
+    
+    def get_weather_data(self, latitude: float, longitude: float) -> Dict:
+        """
+        Fetch weather data using OpenWeather API
+        """
+        return self.get_weather_data_openweather(latitude, longitude)
+    
+    def get_comprehensive_data(self, latitude: float, longitude: float, 
+                              region: str = "Default") -> Dict:
+        """
+        Get comprehensive agricultural data for a location using real APIs
+        """
+        try:
+            # Get soil data from SoilGrids
+            soil_data = self.get_soil_data_soilgrids(latitude, longitude)
+            
+            # Get weather data from OpenWeather
+            weather_data = self.get_weather_data_openweather(latitude, longitude)
+            
+            # Get basic market data
+            market_data = self.get_market_prices()
+            
+            # Get historical data
+            historical_data = self.get_historical_crop_data(region)
+            
+            return {
+                "soil": soil_data,
+                "weather": weather_data,
+                "market": market_data,
+                "history": historical_data,
+                "location": {
+                    "latitude": latitude,
+                    "longitude": longitude,
+                    "region": region
+                },
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            print(f"Error getting comprehensive data: {e}")
+            # Return fallback data
+            return self._get_fallback_comprehensive_data(latitude, longitude, region)
+    
+    def get_market_prices(self, crops: List[str] = None) -> Dict:
+        """
+        Get market prices for crops
+        For now, return mock data similar to DataCollector
+        """
+        if crops is None:
+            crops = ["Rice", "Wheat", "Maize", "Cotton", "Sugarcane"]
+        
+        market_data = {}
+        
+        for crop in crops:
+            market_data[crop] = {
+                "price_per_quintal": round(np.random.uniform(1500, 3500), 2),
+                "market_trend": np.random.choice(["Stable", "Rising", "Falling"]),
+                "demand": np.random.choice(["High", "Medium", "Low"]),
+                "last_updated": datetime.now().strftime("%Y-%m-%d")
+            }
+        
+        return market_data
+    
+    def get_historical_crop_data(self, region: str = "Default") -> Dict:
+        """
+        Get historical crop data for the region
+        """
+        # Mock historical data for now
+        return {
+            "successful_crops": ["rice", "wheat", "jute"],
+            "seasonal_patterns": {
+                "kharif": ["rice", "cotton", "sugarcane"],
+                "rabi": ["wheat", "mustard", "gram"]
+            },
+            "avg_yields": {
+                "rice": 3.5,
+                "wheat": 2.8,
+                "jute": 2.1
+            }
+        }
+    
+    def _get_fallback_comprehensive_data(self, latitude: float, longitude: float, 
+                                        region: str) -> Dict:
+        """
+        Fallback data when APIs fail
+        """
+        return {
+            "soil": self._get_fallback_soil_data(),
+            "weather": self._get_fallback_weather_data(),
+            "market": self.get_market_prices(),
+            "history": self.get_historical_crop_data(region),
+            "location": {
+                "latitude": latitude,
+                "longitude": longitude,
+                "region": region
+            },
+            "timestamp": datetime.now().isoformat()
+        }

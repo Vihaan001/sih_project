@@ -20,21 +20,22 @@ logger = logging.getLogger(__name__)
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from backend.data_collector import DataCollector, DataProcessor
+from data_collector import DataCollector, DataProcessor
+from real_data_collector import RealDataCollector
 from ml_models.crop_recommender import CropRecommendationModel, CropRotationPlanner
-from backend.ai_assistant import AIAssistant
+from ai_assistant import AIAssistant
 # Use Google Gemini assistant if available
 try:
-    from backend.gemini_assistant import GeminiAssistant
+    from gemini_assistant import GeminiAssistant
     gemini_available = True
 except ImportError:
     gemini_available = False
     
 # Use enhanced translator with deep-translator
 try:
-    from backend.translator_enhanced import EnhancedTranslator as Translator
+    from translator_enhanced import EnhancedTranslator as Translator
 except ImportError:
-    from backend.translator import Translator
+    from translator import Translator
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -53,8 +54,16 @@ app.add_middleware(
 )
 
 # Initialize components
-data_collector = DataCollector()
+data_collector = RealDataCollector()  # Use real APIs including SoilGrids
 crop_model = CropRecommendationModel()
+
+# Load trained ML models
+try:
+    crop_model.load_model("../ml_models/trained/")
+    logger.info("Loaded pre-trained ML models successfully")
+except Exception as e:
+    logger.warning(f"Failed to load pre-trained models: {e}")
+    logger.info("Will train new models when needed")
 
 # Initialize AI assistant (Gemini if available, fallback otherwise)
 if gemini_available:
@@ -649,4 +658,4 @@ async def get_offline_data_package():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="debug")
