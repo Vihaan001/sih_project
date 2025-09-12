@@ -136,7 +136,7 @@ class AIAssistant:
             ]
         
         return response
-    
+    #this is a test commit for git
     def _handle_disease_query(self, query: str) -> Dict:
         """Handle disease-related queries"""
         response = {
