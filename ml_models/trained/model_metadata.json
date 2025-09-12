@@ -1,0 +1,69 @@
+{
+  "feature_columns": [
+    "N",
+    "P",
+    "K",
+    "temperature",
+    "humidity",
+    "ph",
+    "rainfall"
+  ],
+  "crops": [
+    "apple",
+    "banana",
+    "blackgram",
+    "chickpea",
+    "coconut",
+    "coffee",
+    "cotton",
+    "grapes",
+    "jute",
+    "kidneybeans",
+    "lentil",
+    "maize",
+    "mango",
+    "mothbeans",
+    "mungbean",
+    "muskmelon",
+    "orange",
+    "papaya",
+    "pigeonpeas",
+    "pomegranate",
+    "rice",
+    "watermelon",
+    "wheat"
+  ],
+  "metrics": {
+    "classifier": {
+      "accuracy": 0.105,
+      "cv_score": 0.127,
+      "cv_std": 0.015684387141358124,
+      "feature_importance": {
+        "feature": {
+          "6": "rainfall",
+          "2": "K",
+          "0": "N",
+          "1": "P",
+          "3": "temperature",
+          "5": "ph",
+          "4": "humidity"
+        },
+        "importance": {
+          "6": 0.1532048315958182,
+          "2": 0.153203497958085,
+          "0": 0.15153787765360657,
+          "1": 0.1446742755324124,
+          "3": 0.14053403123856492,
+          "5": 0.13006611602730406,
+          "4": 0.12677936999420897
+        }
+      }
+    },
+    "yield_predictor": {
+      "mse": 0.28722576973999564,
+      "rmse": 0.535934482693543,
+      "r2": 0.30753707899801475
+    }
+  },
+  "trained_at": "2025-09-09T10:56:59.427783"
+}
