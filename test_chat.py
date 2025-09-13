@@ -53,7 +53,7 @@ def test_chat_without_location():
         'language': 'en'
     }
     
-    print('\\nTesting Chat Endpoint without Location...')
+    print('\nTesting Chat Endpoint without Location...')
     print(f'Request: {test_data}')
     print()
     

@@ -103,7 +103,7 @@ class DataGovInCollector:
                 # Clean and standardize the data
                 df = self._process_crop_data(df)
                 
-                print(f"\\n📊 Total historical records: {len(df)}")
+                print(f"\n📊 Total historical records: {len(df)}")
                 print(f"📅 Years covered: {df['crop_year'].min()} - {df['crop_year'].max()}")
                 print(f"🌾 Unique crops: {df['crop'].nunique()}")
                 
@@ -272,7 +272,7 @@ def demonstrate_integration_with_ml():
     """
     Show how to integrate data.gov.in data with your ML system
     """
-    print("\\n" + "="*60)
+    print("\n" + "="*60)
     print("INTEGRATING DATA.GOV.IN WITH YOUR ML SYSTEM")
     print("="*60)
     
@@ -281,40 +281,40 @@ def demonstrate_integration_with_ml():
     # Example coordinates for Ranchi, Jharkhand
     lat, lon = 23.3441, 85.3096
     
-    print(f"\\n📍 Getting data for coordinates: ({lat}, {lon})")
+    print(f"\n📍 Getting data for coordinates: ({lat}, {lon})")
     
     # 1. Get location details
     location = collector.get_location_details(lat, lon)
     print(f"📍 Location: {location['district']}, {location['state']}")
     
     # 2. Get historical crop data (THIS IS THE KEY INTEGRATION)
-    print("\\n🌾 Fetching historical crop production data...")
+    print("\n🌾 Fetching historical crop production data...")
     crop_data = collector.get_historical_crop_data(lat, lon, years=3)
     
     if not crop_data.empty:
-        print("\\n📊 SAMPLE DATA FOR ML TRAINING:")
+        print("\n📊 SAMPLE DATA FOR ML TRAINING:")
         print(crop_data[['crop', 'season', 'area', 'production', 'yield']].head(10))
         
         # Show how this enhances your ML models
-        print("\\n🤖 HOW THIS ENHANCES YOUR ML MODELS:")
+        print("\n🤖 HOW THIS ENHANCES YOUR ML MODELS:")
         print("1. ✅ Real historical yield data for accurate predictions")
         print("2. ✅ Regional crop performance patterns")
         print("3. ✅ Seasonal trend analysis")
         print("4. ✅ Government-verified agricultural statistics")
         
         # Show specific use cases
-        print("\\n💡 SPECIFIC USE CASES IN YOUR SYSTEM:")
+        print("\n💡 SPECIFIC USE CASES IN YOUR SYSTEM:")
         print("📈 Yield Prediction: Train models on actual historical yields")
         print("🌾 Crop Selection: See what crops perform well in specific areas")
         print("📅 Seasonal Planning: Understand optimal planting seasons")
         print("💰 Profit Estimation: Calculate returns based on historical data")
     
     # 3. Get additional data
-    print("\\n🌧️ Getting rainfall data...")
+    print("\n🌧️ Getting rainfall data...")
     rainfall_data = collector.get_rainfall_data(lat, lon)
     print(f"Annual Rainfall: {rainfall_data['annual_rainfall']}mm")
     
-    print("\\n🌱 Getting soil health data...")
+    print("\n🌱 Getting soil health data...")
     soil_data = collector.get_soil_health_data(lat, lon)
     print(f"Soil pH: {soil_data['ph']:.1f}")
     print(f"Organic Carbon: {soil_data['organic_carbon']:.2f}%")

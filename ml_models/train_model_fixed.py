@@ -185,7 +185,7 @@ class ModelTrainer:
         """
         Train the crop classification model
         """
-        print("\\n=== Training Crop Classifier ===")
+        print("\n=== Training Crop Classifier ===")
         
         # Split data
         X_train, X_test, y_train, y_test = train_test_split(
@@ -233,7 +233,7 @@ class ModelTrainer:
         y_pred = self.crop_classifier.predict(X_test)
         accuracy = accuracy_score(y_test, y_pred)
         
-        print(f"\\nTest Accuracy: {accuracy:.4f}")
+        print(f"\nTest Accuracy: {accuracy:.4f}")
         
         # Cross-validation score
         cv_scores = cross_val_score(self.crop_classifier, X, y, cv=5)
@@ -241,7 +241,7 @@ class ModelTrainer:
         print(f"Average CV score: {cv_scores.mean():.4f} (+/- {cv_scores.std() * 2:.4f})")
         
         # Detailed classification report
-        print("\\nClassification Report:")
+        print("\nClassification Report:")
         print(classification_report(
             y_test, y_pred, 
             target_names=self.label_encoder.classes_,
@@ -254,7 +254,7 @@ class ModelTrainer:
             'importance': self.crop_classifier.feature_importances_
         }).sort_values('importance', ascending=False)
         
-        print("\\nFeature Importance:")
+        print("\nFeature Importance:")
         print(feature_importance)
         
         # Store metrics
@@ -271,7 +271,7 @@ class ModelTrainer:
         """
         Train yield prediction model
         """
-        print("\\n=== Training Yield Predictor ===")
+        print("\n=== Training Yield Predictor ===")
         
         if df is None:
             # Generate synthetic yield data for demonstration
@@ -364,7 +364,7 @@ class ModelTrainer:
         with open(f'{path}model_metadata.json', 'w') as f:
             json.dump(metadata, f, indent=2)
         
-        print(f"\\nModels saved to {path}")
+        print(f"\nModels saved to {path}")
         
     def load_models(self, path: str = 'ml_models/trained/'):
         """
@@ -447,7 +447,7 @@ def main():
     trainer = ModelTrainer()
     
     # Option 1: Train with Kaggle dataset
-    print("\\n1. Attempting to load Kaggle dataset...")
+    print("\n1. Attempting to load Kaggle dataset...")
     kaggle_path = 'data/Crop_recommendation.csv'
     
     if os.path.exists(kaggle_path):
@@ -455,7 +455,7 @@ def main():
     else:
         print(f"Kaggle dataset not found at {kaggle_path}")
         print("Download from: https://www.kaggle.com/atharvaingle/crop-recommendation-dataset")
-        print("\\n2. Attempting to fetch Indian Government data...")
+        print("\n2. Attempting to fetch Indian Government data...")
         df = trainer.load_indian_crop_dataset()
     
     if df is not None and not df.empty:
@@ -464,13 +464,13 @@ def main():
         trainer.train_crop_classifier(X, y, optimize_hyperparameters=False)
         
         # Train yield predictor using crop_production.csv
-        print("\\n=== Training Yield Predictor with crop_production.csv ===")
+        print("\n=== Training Yield Predictor with crop_production.csv ===")
         df_yield = trainer.load_crop_production_dataset()
         trainer.train_yield_predictor(df_yield)
         trainer.save_models()
         
         # Test prediction
-        print("\\n=== Testing Prediction ===")
+        print("\n=== Testing Prediction ===")
         test_input = {
             'N': 90,
             'P': 42,
@@ -489,7 +489,7 @@ def main():
                   f"Yield: {rec['predicted_yield']:.2f} tons/ha")
         
         # Test yield prediction specifically
-        print("\\n=== Testing Yield Predictor ===")
+        print("\n=== Testing Yield Predictor ===")
         yield_test_input = {
             'Area': 100.0,          # Area in hectares
             'Crop_Year': 2023,      # Recent year
@@ -503,13 +503,13 @@ def main():
         print(f"Predicted Yield: {predicted_yield:.2f} tons/ha")
     
     else:
-        print("\\nNo dataset available for training!")
+        print("\nNo dataset available for training!")
         print("Please provide one of the following:")
         print("1. Download Kaggle dataset to data/Crop_recommendation.csv")
         print("2. Configure API keys in .env file for real data fetching")
         
         # Option 2: Build dataset from APIs
-        print("\\n3. Building dataset from APIs (requires API keys)...")
+        print("\n3. Building dataset from APIs (requires API keys)...")
         
         builder = DatasetBuilder()
         

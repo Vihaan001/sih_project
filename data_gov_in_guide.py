@@ -23,7 +23,7 @@ def explore_data_gov_apis():
     print("="*60)
     
     # 1. Current Implementation - Crop Production Statistics
-    print("\\n🌾 1. CURRENTLY IMPLEMENTED:")
+    print("\n🌾 1. CURRENTLY IMPLEMENTED:")
     print("-" * 40)
     print("Dataset: District wise, season wise crop production statistics")
     print("Resource ID: 9ef84268-d588-465a-a308-a864a43d0070")
@@ -33,7 +33,7 @@ def explore_data_gov_apis():
     print("Usage in System: Training data for yield prediction models")
     
     # 2. Additional Available APIs
-    print("\\n🌍 2. OTHER AGRICULTURAL APIs AVAILABLE:")
+    print("\n🌍 2. OTHER AGRICULTURAL APIs AVAILABLE:")
     print("-" * 40)
     
     available_apis = {
@@ -60,13 +60,13 @@ def explore_data_gov_apis():
     }
     
     for name, info in available_apis.items():
-        print(f"\\n📊 {name}:")
+        print(f"\n📊 {name}:")
         print(f"   Resource ID: {info['resource_id']}")
         print(f"   Description: {info['description']}")
         print(f"   Use Case: {info['use_case']}")
     
     # 3. How to use the APIs
-    print("\\n💻 3. HOW TO USE DATA.GOV.IN APIs:")
+    print("\n💻 3. HOW TO USE DATA.GOV.IN APIs:")
     print("-" * 40)
     
     # Example API call
@@ -74,7 +74,7 @@ def explore_data_gov_apis():
     resource_id = "9ef84268-d588-465a-a308-a864a43d0070"
     
     sample_url = f"https://api.data.gov.in/resource/{resource_id}"
-    print(f"\\nBase URL: {sample_url}")
+    print(f"\nBase URL: {sample_url}")
     print("Required Parameters:")
     print("  - api-key: Your registered API key")
     print("  - format: json")
@@ -83,7 +83,7 @@ def explore_data_gov_apis():
     print("  - filters[field]: To filter data")
     
     # Example filters
-    print("\\nExample Filters:")
+    print("\nExample Filters:")
     print("  - filters[state.keyword]: 'Jharkhand'")
     print("  - filters[crop.keyword]: 'Rice'") 
     print("  - filters[season.keyword]: 'Kharif'")
@@ -93,7 +93,7 @@ def test_crop_production_api():
     """
     Test the current crop production API implementation
     """
-    print("\\n🧪 TESTING CROP PRODUCTION API:")
+    print("\n🧪 TESTING CROP PRODUCTION API:")
     print("-" * 40)
     
     api_key = os.getenv('DATA_GOV_IN_API_KEY', '')
@@ -120,7 +120,7 @@ def test_crop_production_api():
         
         response = requests.get(url, params=params, timeout=10)
         
-        print(f"\\nResponse Status: {response.status_code}")
+        print(f"\nResponse Status: {response.status_code}")
         
         if response.status_code == 200:
             data = response.json()
@@ -129,7 +129,7 @@ def test_crop_production_api():
             
             if data.get('records'):
                 sample_record = data['records'][0]
-                print("\\nSample Record:")
+                print("\nSample Record:")
                 for key, value in sample_record.items():
                     print(f"  {key}: {value}")
             
@@ -145,23 +145,23 @@ def integration_in_ml_system():
     """
     Explain how data.gov.in integrates with the ML system
     """
-    print("\\n🤖 INTEGRATION WITH ML SYSTEM:")
+    print("\n🤖 INTEGRATION WITH ML SYSTEM:")
     print("-" * 40)
     
-    print("\\n1. DATA COLLECTION FLOW:")
+    print("\n1. DATA COLLECTION FLOW:")
     print("   🌐 User enters latitude/longitude")
     print("   📍 System determines state/district from coordinates")
     print("   🔍 Query data.gov.in for historical data in that region")
     print("   📊 Combine with real-time soil/weather from other APIs")
     print("   🎯 Feed combined data to ML models")
     
-    print("\\n2. SPECIFIC DATA USAGE:")
+    print("\n2. SPECIFIC DATA USAGE:")
     print("   📈 Historical Yield Data: Train yield prediction models")
     print("   🌾 Crop Patterns: Understand what grows well where")
     print("   📅 Seasonal Trends: Factor seasonality into recommendations")
     print("   🏛️ Government Data: Official agricultural statistics")
     
-    print("\\n3. MODEL ENHANCEMENT:")
+    print("\n3. MODEL ENHANCEMENT:")
     print("   🎯 More Accurate Predictions: Real historical performance")
     print("   🌍 Regional Specificity: India-specific agricultural patterns")
     print("   📊 Validation Data: Cross-check ML predictions with actuals")

@@ -46,7 +46,7 @@ def test_predictions():
     ]
     
     for scenario in test_scenarios:
-        print(f"\\n{scenario['name']}:")
+        print(f"\n{scenario['name']}:")
         print("-" * 40)
         print(f"Input conditions: {scenario['input']}")
         

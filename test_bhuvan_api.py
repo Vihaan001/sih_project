@@ -25,7 +25,7 @@ def test_bhuvan_api():
     base_url = "https://bhuvan-vec1.nrsc.gov.in"
     soil_endpoint = f"{base_url}/api/soil/properties"
     
-    print(f"\\nTrying to access: {soil_endpoint}")
+    print(f"\nTrying to access: {soil_endpoint}")
     
     # Test coordinates (Ranchi, Jharkhand)
     test_lat, test_lon = 23.3441, 85.3096
@@ -41,16 +41,16 @@ def test_bhuvan_api():
         'buffer': 1000
     }
     
-    print(f"\\nTest Parameters:")
+    print(f"\nTest Parameters:")
     print(f"  Latitude: {test_lat}")
     print(f"  Longitude: {test_lon}")
     print(f"  Buffer: 1000m")
     
     try:
-        print(f"\\nMaking API request...")
+        print(f"\nMaking API request...")
         response = requests.get(soil_endpoint, params=params, headers=headers, timeout=10)
         
-        print(f"\\nResponse Status: {response.status_code}")
+        print(f"\nResponse Status: {response.status_code}")
         print(f"Response Headers: {dict(response.headers)}")
         
         if response.status_code == 200:
@@ -75,7 +75,7 @@ def test_bhuvan_api():
             print(f"❌ ERROR ({response.status_code}) - {response.text}")
             
         # Try to get more info about the error
-        print(f"\\nFull Response Text:")
+        print(f"\nFull Response Text:")
         print(response.text[:500])  # First 500 characters
         
     except requests.exceptions.Timeout:
@@ -92,36 +92,36 @@ def check_bhuvan_documentation():
     """
     Check what Bhuvan API actually provides
     """
-    print("\\n" + "="*60)
+    print("\n" + "="*60)
     print("WHAT YOUR BHUVAN API KEY IS SUPPOSED TO ACCESS")
     print("="*60)
     
-    print("\\n🎯 PURPOSE:")
+    print("\n🎯 PURPOSE:")
     print("Your Bhuvan API integration is designed to fetch:")
     print("  📍 Soil properties (pH, nutrients, texture)")
     print("  🌍 India-specific geospatial data") 
     print("  🛰️ Satellite-based soil information")
     print("  📊 ISRO (Indian Space Research Organisation) data")
     
-    print("\\n🔗 ENDPOINT BEING ACCESSED:")
+    print("\n🔗 ENDPOINT BEING ACCESSED:")
     print("  URL: https://bhuvan-vec1.nrsc.gov.in/api/soil/properties")
     print("  Method: GET")
     print("  Authentication: Bearer token")
     
-    print("\\n📋 WHAT IT SHOULD RETURN:")
+    print("\n📋 WHAT IT SHOULD RETURN:")
     print("  - Soil pH levels")
     print("  - Nutrient content (N, P, K)")
     print("  - Soil texture (sand, silt, clay)")
     print("  - Organic matter content")
     print("  - Soil moisture data")
     
-    print("\\n🚨 CURRENT STATUS:")
+    print("\n🚨 CURRENT STATUS:")
     print("  ❌ API key may be invalid/expired")
     print("  ❌ Endpoint might have changed")
     print("  ❌ API might require different authentication")
     print("  ❌ Service might be temporarily unavailable")
     
-    print("\\n💡 HOW IT FITS IN YOUR SYSTEM:")
+    print("\n💡 HOW IT FITS IN YOUR SYSTEM:")
     print("  1. User enters latitude/longitude")
     print("  2. System calls Bhuvan API for Indian soil data")
     print("  3. Combines with weather data from OpenWeather")
@@ -132,32 +132,32 @@ def suggest_alternatives():
     """
     Suggest what to do if Bhuvan API isn't working
     """
-    print("\\n" + "="*60)
+    print("\n" + "="*60)
     print("ALTERNATIVES IF BHUVAN API ISN'T WORKING")
     print("="*60)
     
-    print("\\n🔄 IMMEDIATE SOLUTIONS:")
+    print("\n🔄 IMMEDIATE SOLUTIONS:")
     print("  1. ✅ Continue using SoilGrids (currently working)")
     print("     - Global coverage including India")
     print("     - Free, no authentication required")
     print("     - Already integrated and working")
     
-    print("\\n  2. 🔍 Try to fix Bhuvan integration:")
+    print("\n  2. 🔍 Try to fix Bhuvan integration:")
     print("     - Contact ISRO/NRSC for API documentation")
     print("     - Check if endpoint URL has changed")
     print("     - Verify API key is still valid")
     print("     - Register for new API access")
     
-    print("\\n  3. 🌐 Use data.gov.in instead:")
+    print("\n  3. 🌐 Use data.gov.in instead:")
     print("     - Government soil health card data")
     print("     - District-wise agricultural statistics")
     print("     - Free with registration")
     
-    print("\\n📊 CURRENT DATA FLOW (WITHOUT BHUVAN):")
+    print("\n📊 CURRENT DATA FLOW (WITHOUT BHUVAN):")
     print("  User Input → SoilGrids (soil) + OpenWeather (weather) → ML Models")
     print("  ✅ This is already working perfectly in your system!")
     
-    print("\\n🎯 RECOMMENDATION:")
+    print("\n🎯 RECOMMENDATION:")
     print("  Keep using SoilGrids as primary soil data source")
     print("  Add data.gov.in for historical Indian agricultural data")
     print("  Use Bhuvan as supplementary source when/if it works")
